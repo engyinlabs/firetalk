@@ -5,13 +5,13 @@ from flask_oauthlib.client import OAuth
 
 
 app = Flask(__name__)
-app.config['GOOGLE_ID'] = "403847176041-1a3qahjkf5m786p54qhu5u5c2qvt0rkt.apps.googleusercontent.com"
-app.config['GOOGLE_SECRET'] = "2YyK88tfPFMDXwtm-2p8kQC9"
+app.config['GOOGLE_ID'] = "your google clinet id"
+app.config['GOOGLE_SECRET'] = "your google secret id"
 app.debug = True
 app.secret_key = 'development'
 oauth = OAuth(app)
 
-Qruri = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="
+QR_URI = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="
 google = oauth.remote_app(
     'google',
     consumer_key=app.config.get('GOOGLE_ID'),
@@ -48,16 +48,16 @@ def logout():
 
 @app.route('/oauth2callback')
 def authorized():
-    resp = google.authorized_response()
-    access_token = resp["access_token"]
-    qr_final_uri = Qruri + access_token
+    google_response = google.authorized_response()
+    access_token = google_response["access_token"]
+    qr_final_uri = QR_URI + access_token
 
     if resp is None:
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
             request.args['error_description']
         )
-    session['google_token'] = (resp['access_token'], '')
+    session['google_token'] = (response['access_token'], '')
     me = google.get('userinfo')
     webbrowser.open_new_tab(qr_final_uri)
     return jsonify({"data": me.data})
