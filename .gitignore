@@ -5,3 +5,5 @@ pip-selfcheck.json
 bin/
 lib/
 include/
+local/
+share/
